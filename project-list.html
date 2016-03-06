@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+  <template id="template-project-list">
+    <ul>
+      <li name="project"><a href="" name="name"></a></li>
+    </ul>
+  </template>
+  <script>
+  (() => {
+    "use strict";
+    let currentScript = document._currentScript || document.currentScript;
+
+    class ProjectList extends HTMLElement {
+
+      createdCallback(){
+        this.template =
+          $p(currentScript.ownerDocument.getElementById("template-project-list").content)
+          .compile({
+            "li": {
+              "project<-projects": {
+                "a": "project"
+              }
+            }
+          }
+        );
+      }
+
+      render(data) {
+        this.innerHTML = this.template(data);
+      }
+
+    }
+
+    document.registerElement("project-list", ProjectList);
+  })()
+  </script>

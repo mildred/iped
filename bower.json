@@ -1,0 +1,21 @@
+{
+  "name": "iped",
+  "authors": [
+    "Mildred Ki'Lya"
+  ],
+  "description": "",
+  "main": "",
+  "moduleType": [],
+  "license": "AGPLv3",
+  "homepage": "",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "webcomponentsjs": "^0.7.21"
+  }
+}

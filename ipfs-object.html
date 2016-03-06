@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+  <template id="template-ipfs-object">
+    <div>
+      <p><strong class="title"></strong> <small class="hash"></small></p>
+    </div>
+    <ul>
+      <li>
+        <ipfs-object></ipfs-object>
+      </li>
+    </ul>
+  </template>
+  <style>
+    ipfs-object {
+      display: block;
+      position: relative;
+      /*border: thin solid black;*/
+    }
+    ipfs-object:not(.empty) > div {
+      cursor: pointer;
+    }
+    ipfs-object:not(.empty) > div > p:before {
+      content: "▿";
+      position: absolute;
+      left: 1em;
+    }
+    ipfs-object:not(.empty).closed > div > p:before {
+      content: "▹";
+    }
+    ipfs-object.closed > ul {
+      display: none;
+    }
+    ipfs-object > ul > li {
+      list-style-type: none;
+      margin: 0;
+      padding: 0;
+    }
+    ipfs-object > *, ipfs-object > * > * {
+      margin: 0;
+      padding: 0;
+      padding-left: 1em;
+    }
+  </style>
+  <script>
+  (() => {
+    "use strict";
+    let currentScript = document._currentScript || document.currentScript;
+
+    class IPFSObjectElement extends HTMLElement {
+
+      createdCallback(){
+        this.refresh();
+        this.addEventListener('click', (e) => {
+          this.classList.toggle("closed");
+          e.stopPropagation();
+        }, false)
+      }
+
+      attributeChangedCallback(attributeName) {
+        this.refresh();
+      }
+
+      refresh() {
+        var hash = this.getAttribute("hash")
+        var title = this.getAttribute("title")
+        if (!hash) return;
+        if (!this.template) {
+          this.template =
+            $p(currentScript.ownerDocument.getElementById("template-ipfs-object").content)
+            .compile({
+              ".title": "title",
+              ".hash": "hash",
+              "li": {
+                "link<-object": {
+                  "ipfs-object@title": (i) => i.link.pos,
+                  "ipfs-object@hash": "link"
+                }
+              }
+            });
+        }
+        var obj = objects[hash]
+        this.innerHTML = this.template({
+          hash,
+          title,
+          "object": obj
+        })
+        if (Object.keys(obj).length == 0) {
+          this.classList.add("empty");
+        } else {
+          this.classList.remove("empty");
+        }
+      }
+
+    }
+
+    document.registerElement("ipfs-object", IPFSObjectElement);
+  })()
+  </script>
+
