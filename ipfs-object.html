@@ -1,7 +1,7 @@
 <!DOCTYPE html>
   <template id="template-ipfs-object">
     <div>
-      <p><strong class="title"></strong> <small class="hash"></small></p>
+      <p><span class="arrow">▿</span><strong class="title"></strong> <small class="hash"></small></p>
     </div>
     <ul>
       <li>
@@ -15,16 +15,24 @@
       position: relative;
       /*border: thin solid black;*/
     }
-    ipfs-object:not(.empty) > div {
+    ipfs-object.selected > div > p {
+      background-color: darkgreen;
+      color: white;
+    }
+    ipfs-object.empty > div > p > .arrow {
+      display: none;
+    }
+    ipfs-object:not(.empty) > div > p {
       cursor: pointer;
     }
-    ipfs-object:not(.empty) > div > p:before {
-      content: "▿";
+    ipfs-object:not(.empty) > div > p > .arrow {
       position: absolute;
       left: 1em;
+      transition: 0.2s linear;
     }
-    ipfs-object:not(.empty).closed > div > p:before {
-      content: "▹";
+    ipfs-object:not(.empty).closed > div > p > .arrow {
+      transform: rotate(-0.25turn);
+      transition: 0.2s linear;
     }
     ipfs-object.closed > ul {
       display: none;
@@ -50,13 +58,37 @@
       createdCallback(){
         this.refresh();
         this.addEventListener('click', (e) => {
-          this.classList.toggle("closed");
-          e.stopPropagation();
+          if(e.target.classList.contains("arrow")) {
+            this.classList.toggle("closed");
+            e.stopPropagation();
+          } else {
+            e.stopPropagation();
+            let ev = new Event('selected');
+            ev.hash = this.getAttribute('hash');
+            this.dispatchEvent(ev);
+          }
         }, false)
+        this.addEventListener('selected', (e) => {
+          if (e.target == this) {
+            this.classList.add("selected");
+            for(var elem of this.querySelectorAll('ipfs-object.selected')) {
+              elem.deselect();
+            }
+          } else if (e.target.tagName == this.tagName) {
+            this.classList.remove("selected");
+            for(var elem of this.querySelectorAll('ipfs-object.selected')) {
+              elem.deselect();
+            }
+          }
+        }, true);
       }
 
       attributeChangedCallback(attributeName) {
         this.refresh();
+      }
+
+      deselect() {
+        this.classList.remove("selected");
       }
 
       refresh() {

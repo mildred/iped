@@ -36,6 +36,9 @@
           projects: ["foo", "bar"]
         });
       }, false);
+      ipfs_object.addEventListener('selected', (e) => {
+        console.log("selected " + e.hash);
+      }, true)
     </script>
   </body>
 </html>
