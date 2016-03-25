@@ -3,9 +3,23 @@
   <head>
     <meta charset="utf-8"/>
     <script src="bower_components/webcomponentsjs/webcomponents-lite.js"></script>
+    <script src="bower_components/bytebuffer/dist/ByteBufferAB.js"></script>
+    <script src="bower_components/protobuf/dist/protobuf-light.js"></script>
+    <script type="text/javascript">
+      function unixfs(json) {
+        var unixfs = dcodeIO.ProtoBuf.loadJson(json, "unixfs.proto.json");
+        unixfs.Data = unixfs.build("Data");
+        unixfs.Metadata = unixfs.build("Metadata");
+        window.unixfs = unixfs;
+      }
+    </script>
+    <script src="unixfs.proto.jsonp"></script>
     <script src="pure/libs/pure.js"></script>
-    <link rel="import" href="project-list.html"/>
-    <link rel="import" href="ipfs-object.html"/>
+    <script src="js-ipfs-api/dist/ipfsapi.js"></script>
+    <script type="text/javascript">
+      window.ipfs = ipfsAPI();
+    </script>
+    <link rel="import" href="ipfs-object.html" async="async"/>
     <style>
       ipfs-object {
 
@@ -13,29 +27,9 @@
     </style>
   </head>
   <body>
-    <project-list></project-list>
-    <ipfs-object hash="o1"></ipfs-object>
+    <ipfs-object hash="QmYwAPJzv5CZsnA625s3Xf2nemtYgPpHdWEz79ojWnPbdG"></ipfs-object>
     <script>
-      var objects = {
-        o1: {
-          "foo": "o2",
-          "bar": "o3"
-        },
-        o2: {
-          "baz": "o4"
-        },
-        o3: {
-        },
-        o4: {
-        }
-      };
-      var project_list = document.getElementsByTagName("project-list")[0]
       var ipfs_object = document.getElementsByTagName("ipfs-object")[0]
-      HTMLImports.whenReady(function(){
-        project_list.render({
-          projects: ["foo", "bar"]
-        });
-      }, false);
       ipfs_object.addEventListener('selected', (e) => {
         console.log("selected " + e.hash);
       }, true)

@@ -102,24 +102,26 @@
               ".title": "title",
               ".hash": "hash",
               "li": {
-                "link<-object": {
-                  "ipfs-object@title": (i) => i.link.pos,
-                  "ipfs-object@hash": "link"
+                "link<-object.Links": {
+                  "ipfs-object@title": "link.Name",
+                  "ipfs-object@hash": "link.Hash"
                 }
               }
             });
         }
-        var obj = objects[hash]
-        this.innerHTML = this.template({
-          hash,
-          title,
-          "object": obj
-        })
-        if (Object.keys(obj).length == 0) {
-          this.classList.add("empty");
-        } else {
-          this.classList.remove("empty");
-        }
+        ipfs.object.get(hash).then((obj) => {
+          console.log(obj);
+          this.innerHTML = this.template({
+            hash,
+            title,
+            "object": obj
+          })
+          if (obj.Links.length == 0) {
+            this.classList.add("empty");
+          } else {
+            this.classList.remove("empty");
+          }
+        });
       }
 
     }

@@ -16,6 +16,7 @@
     "tests"
   ],
   "dependencies": {
-    "webcomponentsjs": "^0.7.21"
+    "webcomponentsjs": "^0.7.21",
+    "protobuf": "~5.0.1"
   }
 }
