@@ -17,6 +17,7 @@
   ],
   "dependencies": {
     "webcomponentsjs": "^0.7.21",
-    "protobuf": "~5.0.1"
+    "protobuf": "~5.0.1",
+    "long": "^3.0.3"
   }
 }

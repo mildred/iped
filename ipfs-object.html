@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<html>
   <template id="template-ipfs-object">
     <div>
       <p><span class="arrow">▿</span><strong class="title"></strong> <small class="hash"></small></p>
@@ -10,6 +11,7 @@
     </ul>
   </template>
   <style>
+    /*<![CDATA[*/
     ipfs-object {
       display: block;
       position: relative;
@@ -47,8 +49,10 @@
       padding: 0;
       padding-left: 1em;
     }
+    /*]]>*/
   </style>
   <script>
+  //<![CDATA[
   (() => {
     "use strict";
     let currentScript = document._currentScript || document.currentScript;
@@ -128,5 +132,6 @@
 
     document.registerElement("ipfs-object", IPFSObjectElement);
   })()
+  //]]>
   </script>
-
+</html>

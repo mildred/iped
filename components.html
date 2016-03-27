@@ -3,6 +3,7 @@
   <head>
     <meta charset="utf-8"/>
     <script src="bower_components/webcomponentsjs/webcomponents-lite.js"></script>
+    <script src="bower_components/long/dist/long.js"></script>
     <script src="bower_components/bytebuffer/dist/ByteBufferAB.js"></script>
     <script src="bower_components/protobuf/dist/protobuf-light.js"></script>
     <script type="text/javascript">
@@ -12,7 +13,14 @@
         unixfs.Metadata = unixfs.build("Metadata");
         window.unixfs = unixfs;
       }
+      function ipld(json) {
+        var ipld = dcodeIO.ProtoBuf.loadJson(json, "ipld.proto.json");
+        ipld.PBLink = ipld.build("PBLink");
+        ipld.PBNode = ipld.build("PBNode");
+        window.ipld = ipld;
+      }
     </script>
+    <script src="ipld.proto.jsonp"></script>
     <script src="unixfs.proto.jsonp"></script>
     <script src="pure/libs/pure.js"></script>
     <script src="js-ipfs-api/dist/ipfsapi.js"></script>
@@ -21,17 +29,82 @@
     </script>
     <link rel="import" href="ipfs-object.html" async="async"/>
     <style>
-      ipfs-object {
+      body {
+        display: flex;
+      }
+      ipfs-object.root {
 
       }
     </style>
   </head>
   <body>
-    <ipfs-object hash="QmYwAPJzv5CZsnA625s3Xf2nemtYgPpHdWEz79ojWnPbdG"></ipfs-object>
+    <ipfs-object class="root" hash="QmYwAPJzv5CZsnA625s3Xf2nemtYgPpHdWEz79ojWnPbdG"></ipfs-object>
+    <pre>
+      Hello World
+    </pre>
     <script>
-      var ipfs_object = document.getElementsByTagName("ipfs-object")[0]
+      var ipfs_object = document.getElementsByTagName("ipfs-object")[0];
+      var pre = document.getElementsByTagName("pre")[0];
       ipfs_object.addEventListener('selected', (e) => {
         console.log("selected " + e.hash);
+        /*
+        ipfs.object.data(e.hash).then((obj) => {
+          console.log(obj);
+          obj.on('read', function(dta){
+            console.log("dta:");
+            console.log(dta);
+          })
+          var data = obj.read();
+          console.log(data);
+          //var arbuf = data.toArrayBufer();
+          var str = String.fromCharCode.apply(null, data);
+          console.log(str);
+          console.log(unixfs.Data.decode(str));
+          pre.textContent = obj.Data;
+        });
+        */
+        /*
+        ipfs.object.get(e.hash, (err, o) => {
+          console.log(o);
+        });
+        */
+        ipfs.object.data(e.hash).then((res) => {
+          let buf = new Uint8Array()
+          function appendBuffer(buffer1, buffer2) {
+            var tmp = new Uint8Array(buffer1.byteLength +
+                buffer2.byteLength);
+            tmp.set(new Uint8Array(buffer1), 0);
+            tmp.set(new Uint8Array(buffer2),
+                buffer1.byteLength);
+            return tmp.buffer;
+          };
+          res
+            .on('error', (err) => {
+              throw err
+            })
+            .on('data', (data) => {
+              console.log(data);
+              /*
+              var bb = dcodeIO.ByteBuffer.wrap(data);
+              console.log(bb);
+              bb.printDebug();
+              console.log(unixfs.Data.decode(bb))
+              */
+              //console.log(unixfs.Data.decode64(btoa(String.fromCharCode.apply(null,
+              //          data))))
+              //buf += String.fromCharCode.apply(null, data)
+              buf = appendBuffer(buf, data)
+            })
+            .on('end', () => {
+              console.log(buf);
+              var bb = dcodeIO.ByteBuffer.wrap(buf);
+              //console.log(bb);
+              //bb.printDebug();
+              var unixfs_entry = unixfs.Data.decode(bb);
+              pre.textContent = unixfs_entry.Data.toUTF8();
+              //console.log(unixfs.Data.decode(buf));
+            })
+        });
       }, true)
     </script>
   </body>

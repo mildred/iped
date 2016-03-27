@@ -1,6 +1,7 @@
-all: unixfs.proto.jsonp
+all: unixfs.proto.jsonp ipld.proto.jsonp
 
 unixfs.proto.jsonp: CALLBACK=unixfs
+ipld.proto.jsonp: CALLBACK=ipld
 %.jsonp: %.json
 	: >$@
 	echo -n '$(CALLBACK)(' >>$@
